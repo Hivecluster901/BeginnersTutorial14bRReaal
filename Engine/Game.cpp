@@ -45,60 +45,83 @@ void Game::Go()
 
 void Game::UpdateModel()
 {
-    if (!isGameOver)
+    if (gameisStarted)
     {
-        if (wnd.kbd.KeyIsPressed(VK_RIGHT))
-        {
-            delta_loc = { 1, 0 };
-        }
-        else if (wnd.kbd.KeyIsPressed(VK_LEFT))
-        {
-            delta_loc = { -1, 0 };
-        }
-        else if (wnd.kbd.KeyIsPressed(VK_UP))
-        {
-            delta_loc = { 0, -1 };
-        }
-        else if (wnd.kbd.KeyIsPressed(VK_DOWN))
-        {
-            delta_loc = { 0, 1 };
-        }
-        snekMoveCounter++;
-        if (snekMoveCounter == snekMovePeriod)
-        {
-            snekMoveCounter = 0;
-            const Location next = snek.GeNextHeadLocation(delta_loc);
-            if (!brd.IsInsideBoard(next) || snek.IsInTileExceptEnd(next))
-            {
-                isGameOver = true;
-            }
-            else
-            {
-                const bool eating = (next == goal.GetLocation());
-                if (eating)
-                {
-                    snek.Grow();
-                    
-                }
-                snek.MoveBy(delta_loc);
 
-                if (eating)
+
+        if (!isGameOver)
+        {
+            if (wnd.kbd.KeyIsPressed(VK_RIGHT))
+            {
+                delta_loc = { 1, 0 };
+            }
+            else if (wnd.kbd.KeyIsPressed(VK_LEFT))
+            {
+                delta_loc = { -1, 0 };
+            }
+            else if (wnd.kbd.KeyIsPressed(VK_UP))
+            {
+                delta_loc = { 0, -1 };
+            }
+            else if (wnd.kbd.KeyIsPressed(VK_DOWN))
+            {
+                delta_loc = { 0, 1 };
+            }
+            snekMoveCounter++;
+            if (snekMoveCounter == snekMovePeriod)
+            {
+                snekMoveCounter = 0;
+                const Location next = snek.GeNextHeadLocation(delta_loc);
+                if (!brd.IsInsideBoard(next) || snek.IsInTileExceptEnd(next))
                 {
-                    goal.Respawn(rng, brd, snek);// We should respawn the goal after the snake moves.
+                    isGameOver = true;
+                }
+                else
+                {
+                    const bool eating = (next == goal.GetLocation());
+                    if (eating)
+                    {
+                        snek.Grow();
+
+                    }
+                    snek.MoveBy(delta_loc);
+
+                    if (eating)
+                    {
+                        goal.Respawn(rng, brd, snek);// We should respawn the goal after the snake moves.
+                    }
                 }
             }
+            snekSpeedUpCounter++;
+            if (snekSpeedUpCounter == snekSpeedUpPeriod)
+            {
+                snekSpeedUpCounter = 0;
+                snekMovePeriod = std::max(snekMovePeriod - 1, snekMovePeriodMin);
+            }
         }
+    }
+    else
+    {
+        gameisStarted = wnd.kbd.KeyIsPressed(VK_RETURN);
     }
     
 }
 
 void Game::ComposeFrame()
 {
-    
-    snek.Draw(brd);
-    goal.Draw(brd);
-    if (isGameOver)
+    if (gameisStarted)
     {
-        SpriteCodex::DrawGameOver(350, 250 , gfx);
+
+        snek.Draw(brd);
+        goal.Draw(brd);
+        if (isGameOver)
+        {
+            SpriteCodex::DrawGameOver(350, 265, gfx);
+        }
+        brd.DrawBorder();
+    }
+    else
+    {
+        SpriteCodex::DrawTitle(290, 225, gfx);
     }
 }

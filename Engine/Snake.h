@@ -10,7 +10,7 @@ private:
 	{
 	public:
 		void InitHead(const Location& in_loc);
-		void InitBody();
+		void InitBody(Color c);
 		void Follow(const Segment& next);
 		void MoveBy(const Location& delta_loc);
 		void Draw(Board& brd) const;

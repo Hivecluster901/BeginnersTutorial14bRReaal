@@ -53,8 +53,12 @@ private:
     std::random_device rd;
     std::mt19937 rng;
     Goal goal;
-    static constexpr int snekMovePeriod = 20;
+    static constexpr int snekMovePeriodMin = 4;
+    int snekMovePeriod = 20;
     int snekMoveCounter = 0;
+    static constexpr int snekSpeedUpPeriod = 180;
+    int snekSpeedUpCounter = 0;
     bool isGameOver = false;
+    bool gameisStarted = false;
 	/********************************/
 };
